@@ -1,7 +1,3 @@
 .vscode/
 /node_modules/
-/blob-report/
-/playwright/.cache/
-/playwright-report/
-/test-results/
 /unstaged/
