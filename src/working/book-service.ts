@@ -88,7 +88,7 @@ const authors: Author[] = [
   },
   {
     id: 3, 
-    firstName: "H. Rider", 
+    firstName: "H.Rider", 
     lastName: "Haggard" 
   },
   {
@@ -170,7 +170,7 @@ class BookService implements IBookService {
         (book.title.toLowerCase().includes(searchStringLowerCase) ||
           (author.firstName + " " + author.lastName).toLowerCase().includes(searchStringLowerCase))
       ) {
-        results.push(author.firstName + " " + author.lastName) + "- " + book.title;
+        results.push(author.firstName + " " + author.lastName) + " - " + book.title;
       }
     });
 
