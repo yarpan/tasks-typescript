@@ -1,3 +1,4 @@
+
 interface ICalculator {
     add(x: number, y: number): number;
     subtract(x: number, y: number): number;
@@ -12,14 +13,17 @@ interface ICalculator {
       return x + y;
     }
   
+
     subtract(x: number, y: number): number {
       return x - y;
     }
   
+
     multiply(x: number, y: number): number {
       return x * y;
     }
   
+
     divide(x: number, y: number): number {
       if (y === 0) {
         throw new Error("Impossible to divide on zero");
@@ -27,10 +31,12 @@ interface ICalculator {
       return x / y;
     }
   
+
     percent(x: number, y: number): number {
       return x / 100 * y;
     }
   
+
     calculate(operation: string, x: number, y: number): number {
       switch (operation) {
         case "add":
