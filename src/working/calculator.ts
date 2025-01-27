@@ -1,19 +1,18 @@
-interface ICalculator {
-  add(x: number, y: number): number;
-  subtract(x: number, y: number): number;
-  multiply(x: number, y: number): number;
-  divide(x: number, y: number): number;
-  percent(x: number, y: number): number;
-  calculate(operation: string, x: number, y: number): number;
-}
-
-
 enum Operation {
   Add = "add",
   Subtract = "subtract",
   Multiply = "multiply",
   Divide = "divide",
   Percent = "percent",
+}
+
+interface ICalculator {
+  add(x: number, y: number): number;
+  subtract(x: number, y: number): number;
+  multiply(x: number, y: number): number;
+  divide(x: number, y: number): number;
+  percent(x: number, y: number): number;
+  calculate(operation: Operation, x: number, y: number): number;
 }
 
 
