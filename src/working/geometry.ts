@@ -197,9 +197,5 @@ abstract class FigureBase {
     printAreaFormula(): void {
       console.log("Area formula depends on the specific polygon type");
     }
-  
-    printInfo(): void {
-      console.log(`Figure: ${this.name}, Color: ${this.color}, Sides: ${this.sides.join(", ")}`);
-    }
   }
   
