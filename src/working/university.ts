@@ -162,13 +162,21 @@ class Group {
     return [...this.students];
   }
 
-  getStudentById(id: number): Student | undefined {
-    return this.students.find((student: Student) => student.id === id);
+  getStudentById(id: number): Student | undefined;
+  getStudentById(id: number[]): Student[];
+  getStudentById(id: number | number[]): Student | Student[] | undefined {
+    if (Array.isArray(id)) {
+      return this.students.filter((student: Student) =>
+        id.includes(student.id)
+      );
+    } else {
+      return this.students.find((student: Student) => student.id === id);
+    }
   }
 }
 
 class Person {
-  static nextId = 1;
+  static nextId: number = 1;
 
   firstName: string;
   lastName: string;
@@ -211,10 +219,10 @@ class Person {
 }
 
 class Teacher extends Person {
-  specializations: string[] = [];
+  specializations: Discipline[] = [];
   courses: Course[] = [];
 
-  constructor(info: PersonInfo, specializations: string[] = []) {
+  constructor(info: PersonInfo, specializations: Discipline[] = []) {
     super(info, Role.Teacher);
     this.specializations = specializations;
   }
