@@ -37,6 +37,7 @@ class Queue<T> {
 }
 
 
+
 // Завдання #3: Узагальнена функція сортування
 
 function sortArray<T>(arr: T[], compareFunc: Function): T[] {
@@ -44,6 +45,7 @@ function sortArray<T>(arr: T[], compareFunc: Function): T[] {
         return compareFunc(a, b);
     });
 }
+
 
 
 // Завдання #4: Узагальнені обмеження
@@ -72,6 +74,7 @@ const nameA = extractProperty(personA, "name");
 const ageA = extractProperty(personA, "age"); 
 console.log(nameA); 
 console.log(ageA); 
+
 
 
 // Завдання #5: Узагальнені типи та користувацькі колекції
@@ -105,18 +108,18 @@ class Users implements Identifiable {
     constructor(public id: number, public name: string) { }
 }
 
-class Product implements Identifiable {
+class Products implements Identifiable {
     constructor(public id: number, public title: string) { }
 }
 
 const userRepository = new Repository<Users>();
-userRepository.add(new Users(1, 'Alice'));
-userRepository.add(new Users(2, 'Bob'));
+userRepository.add(new Users(1, 'Vasyl'));
+userRepository.add(new Users(2, 'Petro'));
 console.log(userRepository.getById(1));
 console.log(userRepository.getAll());
 
-const productRepository = new Repository<Product>();
-productRepository.add(new Product(100, 'Laptop'));
-productRepository.add(new Product(101, 'Phone'));
+const productRepository = new Repository<Products>();
+productRepository.add(new Products(100, 'javelin'));
+productRepository.add(new Products(101, 'machinegun'));
 console.log(productRepository.getById(100));
 console.log(productRepository.getAll());
