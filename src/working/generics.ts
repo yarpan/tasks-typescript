@@ -1,5 +1,15 @@
+/*Task #1: Discriminated Union with Generics
 
-// Завдання #1: Дискримінантне об'єднання з узагальненням
+Create a discriminated union Result to represent the result of an asynchronous operation:
+
+A status field which can be either "success" or "error".
+A data field for "success".
+An error field for "error".
+Create a function handleResult that:
+
+If status === 'success', returns data.
+If status === 'error', throws an error with error.
+*/
 
 type Result<T> =
     | { status: 'success'; data: T }
@@ -14,7 +24,17 @@ function handleResult<T>(result: Result<T>): T {
 }
 
 
-// Завдання #2: Узагальнена черга
+
+/*
+Task #2: Generic Queue
+
+Create a generic class Queue that implements a queue data structure and has the following methods:
+
+enqueue — adds an element to the end of the queue.
+dequeue — removes and returns an element from the front of the queue.
+peek — returns an element from the front of the queue without removing it.
+size — returns the number of elements in the queue.
+*/
 
 class Queue<T> {
     private items: T[] = [];
@@ -38,7 +58,15 @@ class Queue<T> {
 
 
 
-// Завдання #3: Узагальнена функція сортування
+/*
+Task #3: Generic Sorting Function
+
+Create a function sortArray that:
+
+Accepts an array arr of any type.
+Accepts a function compareFn that compares two elements.
+Returns a sorted array without modifying the original.
+*/
 
 function sortArray<T>(arr: T[], compareFunc: Function): T[] {
     return arr.slice().sort(function (a: T, b: T): number {
@@ -48,7 +76,13 @@ function sortArray<T>(arr: T[], compareFunc: Function): T[] {
 
 
 
-// Завдання #4: Узагальнені обмеження
+/*
+Task #4: Generic Constraints
+
+Create a function extractProperty that returns the value of an object's property.
+
+Use constraints to ensure that the key actually belongs to the object.
+*/
 
 interface PersonA {
     name: string;
@@ -77,7 +111,21 @@ console.log(ageA);
 
 
 
-// Завдання #5: Узагальнені типи та користувацькі колекції
+/*
+Task #5: Generic Types and Custom Collections
+
+Create an Identifiable interface with an id field.
+
+Create a Repository class to store objects that implement Identifiable.
+
+Methods:
+
+add — adds an object with a unique id.
+getById — returns an object by its id.
+removeById — removes an object and returns true if it was found and removed, otherwise false.
+getAll — returns all objects.
+Create several data types, such as User, Product, which implement Identifiable, and demonstrate the usage of Repository<User> and Repository<Product>.
+*/
 
 interface Identifiable {
     id: number;
