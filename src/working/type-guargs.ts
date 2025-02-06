@@ -1,3 +1,32 @@
+/*
+Task: Create a Login Method with Type Guards
+Suppose you have two types of objects:
+
+type User = {
+  username: string;
+  password: string;
+};
+
+type Guest = {
+  sessionId: string;
+};
+
+Create a method login(entity) that accepts either User or Guest.
+
+Inside login, use type guards:
+
+If a User is passed, print a message to the console about authorization by username.
+
+If a Guest is passed, print a message about guest authorization by session ID.
+
+Create a type Admin with a field role: "admin" and fields username and password.
+
+Add support for this type in login. Create another type guard for this check:
+
+If it is an Admin, print a message about logging in with admin rights.
+
+Also, add a type ExternalUser with a field oauthToken: string and extend the logic with another type guard for this type.
+*/
 
 enum EntityType {
   USER = "USER",

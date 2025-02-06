@@ -1,3 +1,60 @@
+/*
+Task: Design a Class Hierarchy for Geometric Figures
+You need to design a class hierarchy for geometric figures using abstract classes and inheritance.
+
+Base Class for Describing Figures
+The class should have:
+
+Properties (public, immutable after creation):
+name: name of the figure
+color: color of the figure
+
+Methods:
+calculateArea: returns the area of the figure
+calculatePerimeter: returns the perimeter of the figure
+printInfo: prints information about the figure
+
+Class for Elliptical Figures
+Additional method:
+printDiameter: prints the diameter (or diameters) to the console
+
+Class Circle
+Add the necessary properties
+
+Implement the methods:
+calculateArea
+calculatePerimeter
+
+Class Ellipse
+Add the necessary properties
+Implement the methods:
+calculateArea
+calculatePerimeter
+
+Base Abstract Class for Polygonal Figures
+sides: list of side lengths of the polygon
+Methods:
+getNumberOfSides: returns the number of sides
+Implement the abstract method calculatePerimeter
+Abstract method printAreaFormula: prints the area formula as a string
+
+Class Rectangle
+Add the necessary properties
+
+Class Square
+Add the necessary properties
+
+Class Triangle
+Add the necessary properties
+
+Methods:
+printTriangleType: prints the type of triangle (isosceles, equilateral, or scalene) depending on the values passed during creation
+calcHeight: calculates the height of the triangle
+
+Class Polygon
+Add the necessary properties
+*/
+
 abstract class FigureBase {
     constructor(public readonly name: string, public readonly color: string) {}
   
