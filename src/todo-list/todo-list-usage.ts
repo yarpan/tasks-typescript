@@ -1,10 +1,11 @@
 
-import { TodoList } from './todo-list';
+import { TodoList, FileStorage } from './todo-list';
 
-const todoList = new TodoList();
+const storage = new FileStorage('todo-list-data.json');
+const todoList = new TodoList(storage);
 
 const task1 = todoList.addTask(
-    'Підготувати список аргументів для розмови про підвищення зарплатні',
+    'Підготувати аргументи для підвищення зарплатні',
     'Додати аргументи, які можуть бути корисними для обговорення підвищення.',
     'protected'
 );
@@ -12,7 +13,7 @@ console.log('Додано нову таску:', task1);
 
 
 const task2 = todoList.addTask(
-    'Нанести мітинг для обговорення підвищення зарплатні',
+    'Засетапити мітинг для обговорення підвищення зарплатні',
     'Запланувати зустріч на найближчий понеділок'
 );
 console.log('Додано нову таску:', task2);
@@ -21,32 +22,45 @@ console.log('Додано нову таску:', task2);
 console.log('Усі таски:', todoList.getAllTasks());
 
 
-const updated = todoList.editTask(
-    task1.id,
-    'Підготувати аргументи для підвищення зарплатні',
-    'Додати нові аргументи, які нададуть більше переконливості.',
-    'force'
-);
-if (updated) {
-    console.log('Таску відредаговано:', todoList.getTask(task1.id));
+if (task1) {
+    const updated = todoList.editTask(
+        task1.id,
+        'Підготувати нові аргументи для підвищення зарплатні',
+        'Додати нові аргументи, які нададуть більше переконливості.',
+        'force'
+    );
+
+    if (updated) {
+        console.log('Таску відредаговано:', todoList.getTask(task1.id));
+    } else {
+        console.log('Не вдалося редагувати таску.');
+    }
 } else {
-    console.log('Не вдалося редагувати таску.');
+    console.log('Ідентифікатор таски не знайдено.');
 }
 
 
-const markedCompleted = todoList.markCompleted(task2.id);
-if (markedCompleted) {
-    console.log('Таска помічена як виконана:', todoList.getTask(task2.id));
+if (task2) {
+    const markedCompleted = todoList.markCompleted(task2.id);
+    if (markedCompleted) {
+        console.log('Таска помічена як виконана:', todoList.getTask(task2.id));
+    } else {
+        console.log('Не вдалося позначити таску як виконану.');
+    }
 } else {
-    console.log('Не вдалося позначити таску як виконану.');
+    console.log('Таска не знайдена або не має id.');
 }
 
 
-const deleted = todoList.deleteTask(task1.id);
-if (deleted) {
-    console.log('Таску видалено:', task1.id);
+if (task1) {
+    const deleted = todoList.deleteTask(task1.id);
+    if (deleted) {
+        console.log('Таску видалено:', task1.id);
+    } else {
+        console.log('Не вдалося видалити таску.');
+    }
 } else {
-    console.log('Не вдалося видалити таску.');
+    console.log('Таска не знайдена або не має id.');
 }
 
 

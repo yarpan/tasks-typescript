@@ -4,7 +4,7 @@ type TaskType = 'default' | 'protected';
 type ForceFlag = 'force' | undefined;
 type Uuid = string & { __uuid: 'uuid' };
 
-interface Task {
+interface ITask {
   id: Uuid;
   title: string;
   content: string;
@@ -14,11 +14,64 @@ interface Task {
   type: TaskType;
 }
 
-export class TodoList {
-  private tasks: Map<Uuid, Task> = new Map();
-  private filePath = 'todo-list-data.json';
+interface ITodoList {
+  addTask(title: string, content: string, type?: TaskType): ITask | undefined;
+  deleteTask(id: Uuid, force?: ForceFlag): boolean;
+  editTask(id: Uuid, title?: string, content?: string, force?: ForceFlag): boolean;
+  markCompleted(id: Uuid): boolean;
+  getTask(id: Uuid): ITask | undefined;
+  getAllTasks(): ITask[];
+  getTaskCounts(): { total: number; remaining: number };
+  searchTasks(query: string): ITask[];
+  sortTasks(by: "status" | "date"): ITask[];
+}
 
-  constructor() {
+export interface ITaskStorage {
+  loadTasks(): ITask[];
+  saveTasks(tasks: ITask[]): boolean;
+}
+
+export abstract class TaskStorage {
+  abstract loadTasks(): ITask[];
+  abstract saveTasks(tasks: ITask[]): boolean;
+}
+
+export class FileStorage extends TaskStorage {
+  private filePath: string;
+
+  constructor(filePath: string) {
+    super();
+    this.filePath = filePath;
+  }
+
+  loadTasks(): ITask[] {
+    try {
+      const data = readFileSync(this.filePath, "utf-8");
+      return JSON.parse(data);
+    } catch (error) {
+      console.error("Error reading tasks:", error);
+      return [];
+    }
+  }
+
+  saveTasks(tasks: ITask[]): boolean {
+    try {
+      writeFileSync(this.filePath, JSON.stringify(tasks, null, 2));
+      return true;
+    } catch (error) {
+      console.error("Error saving tasks:", error);
+      return false;
+    }
+  }
+}
+
+
+export class TodoList implements ITodoList {
+  private tasks: Map<Uuid, ITask> = new Map();
+  private storage: ITaskStorage;
+
+  constructor(storage: ITaskStorage) {
+    this.storage = storage;
     this.loadTasks();
   }
 
@@ -30,34 +83,32 @@ export class TodoList {
     return uuid as Uuid;
   }
 
-  private loadTasks(): void {
+  private loadTasks(): boolean {
     try {
-      const data = readFileSync(this.filePath, 'utf-8');
-      const tasks: Task[] = JSON.parse(data);
-      tasks.forEach(task => {
-        this.tasks.set(task.id, task);
-      });
+      const tasks = this.storage.loadTasks();
+      tasks.forEach(task => this.tasks.set(task.id, task));
+      return true;
     } catch (error) {
-      console.log("Can not read list of To Do's");
+      console.log("Error loading tasks:", error);
+      return false;
     }
   }
 
   private saveTasks(): boolean {
     try {
-      const tasksArray = Array.from(this.tasks.values());
-      writeFileSync(this.filePath, JSON.stringify(tasksArray, null, 2));
-      return true;
+      return this.storage.saveTasks(Array.from(this.tasks.values()));
     } catch (error) {
-      console.error("Error saving tasks:", error);
+      console.log("Error saving tasks:", error);
       return false;
     }
   }
 
-  addTask(title: string, content: string, type: TaskType = "default"): Task {
+  addTask(title: string, content: string, type: TaskType = "default"): ITask | undefined {
     if (!title.trim() || !content.trim()) {
-      throw new Error("Title and content cannot be empty");
+      console.log("Title and content cannot be empty");
+      return undefined;
     }
-    const newTask: Task = {
+    const newTask: ITask = {
       id: this.generateUuid(),
       title,
       content,
@@ -67,8 +118,9 @@ export class TodoList {
       type,
     };
     this.tasks.set(newTask.id, newTask);
-    this.saveTasks();
-    return newTask;
+    const isTaskSaved: boolean = this.saveTasks();
+    if (isTaskSaved)
+      return newTask;
   }
 
   deleteTask(id: Uuid, force?: ForceFlag): boolean {
@@ -79,8 +131,8 @@ export class TodoList {
       return false;
     }
     this.tasks.delete(id);
-    this.saveTasks();
-    return true;
+    const isTaskSaved: boolean = this.saveTasks();
+    return isTaskSaved;
   }
 
   editTask(id: Uuid, title?: string, content?: string, force?: ForceFlag): boolean {
@@ -95,8 +147,8 @@ export class TodoList {
     task.title = title !== undefined ? title : task.title;
     task.content = content !== undefined ? content : task.content;
     task.updatedAt = new Date();
-    this.saveTasks();
-    return true;
+    const isTaskSaved: boolean = this.saveTasks();
+    return isTaskSaved;
   }
 
   markCompleted(id: Uuid): boolean {
@@ -104,15 +156,15 @@ export class TodoList {
     if (!task) return false;
     task.completed = true;
     task.updatedAt = new Date();
-    this.saveTasks();
-    return true;
+    const isTaskSaved: boolean = this.saveTasks();
+    return isTaskSaved;
   }
 
-  getTask(id: Uuid): Task | undefined {
+  getTask(id: Uuid): ITask | undefined {
     return this.tasks.get(id);
   }
 
-  getAllTasks(): Task[] {
+  getAllTasks(): ITask[] {
     return Array.from(this.tasks.values());
   }
 
@@ -124,13 +176,13 @@ export class TodoList {
     };
   }
 
-  searchTasks(query: string): Task[] {
+  searchTasks(query: string): ITask[] {
     return Array.from(this.tasks.values()).filter(task =>
       task.title.includes(query) || task.content.includes(query)
     );
   }
 
-  sortTasks(by: "status" | "date"): Task[] {
+  sortTasks(by: "status" | "date"): ITask[] {
     const tasksArray = Array.from(this.tasks.values());
     if (by === "status") {
       return tasksArray.sort((a, b) => Number(a.completed) - Number(b.completed));
