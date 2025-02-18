@@ -1,3 +1,25 @@
+
+/*
+Create an interface and corresponding functionality for a simple calculator.
+
+The calculator should perform basic arithmetic operations and include an additional function to calculate percentages.
+
+Requirements:
+Create an interface ICalculator that defines the calculator object.
+
+The interface should contain methods for the following operations:
+add – addition
+subtract – subtraction
+multiply – multiplication
+divide – division
+percent – percentage calculation
+Create a class Calculator that implements ICalculator and enables calculations:
+
+Define a method to accept an "operation" and the required parameters.
+Implement method overloading if needed
+
+*/
+
 enum Operation {
   Add = "add",
   Subtract = "subtract",
