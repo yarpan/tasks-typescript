@@ -1,5 +1,10 @@
+/*
+Task #1: DeprecatedMethod
 
-// Завдання #1: DeprecatedMethod
+Create a DeprecatedMethod decorator and teach it to work with an object 
+that can accept a reason why a method should not be used, 
+as well as the name of a method that can replace it, if possible.
+*/
 
 function DeprecatedMethod(reason: string, replacement?: string) {
   return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<any>): void {
@@ -32,7 +37,11 @@ myObject.newMethod();
 
 
 
-// Завдання #2: MinLength, MaxLength, Email
+/*
+Task #2: MinLength, MaxLength, Email
+
+Create decorators for the MinLength, MaxLength, and Email fields.
+*/
 
 function MinLength(length: number) {
   return function (target: any, propertyKey: string) {
@@ -123,7 +132,12 @@ console.log(userX);
 
 
 
-// Завдання #3: Experimental decorators
+/*
+Task #3: Experimental decorators
+
+Using the previous version of the decorators, redesign MinLength, MaxLength, 
+and Email so that they can be used together.
+*/
 
 function registerValidator(target: any, propertyKey: string, validator: (value: any) => void) {
   if (!target.constructor._validationRules) {
