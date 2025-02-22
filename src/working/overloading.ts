@@ -149,6 +149,31 @@ const exampleBookS: PartialBook = {
 
 
 
+// Завдання #5: ReadonlyByKeys
+// Створіть тип, який робить зазначені ключі K в об'єкті T доступними лише для читання.
+
+type ReadonlyByKeys<T, K extends keyof T> = Omit<T, K> & Readonly<Pick<T, K>>;
+
+interface BookFF {
+    title: string;
+    author: string;
+    publishedYear: number;
+    genres: string[];
+}
+
+type ReadonlyBookTitle = ReadonlyByKeys<BookFF, 'title'>;
+
+const exampleBookFF: ReadonlyBookTitle = {
+    title: "Пригоди Шерлока Холмса",
+    author: "Артур Конан Дойл",
+    publishedYear: 1892,
+    genres: ["Детектив", "Пригоди"]
+};
+
+
+exampleBookFF.title = "Новий Заголовок"; // Cannot assign to 'title' because it is a read-only property.
+exampleBookFF.author = "Інший Автор"; // OK
+
 
 
 
