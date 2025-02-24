@@ -50,7 +50,7 @@ type DeepReadonly<T> = {
     readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];
 };
 
-// Приклад використання
+
 type BookQ = {
     title: string;
     author: {
@@ -178,22 +178,88 @@ exampleBookFF.author = "Інший Автор"; // OK
 
 
 
+// Завдання #6: MutableByKeys
+// Протилежність ReadonlyByKeys: робить конкретні ключі змінними, якщо вони були readonly.
+
+// type MutableByKeys<T, K extends keyof any> = {
+//     [P in keyof T as P extends K ? P : never]: -readonly [P];
+// } & Omit<T, K>;
+
+type MutableByKeys<T, K extends keyof T> = Omit<T, K> & {
+    -readonly [P in K]: T[P];
+};
+
+
+interface Example {
+    readonly a: number;
+    b: string;
+    readonly c: boolean;
+}
+
+type Test1 = MutableByKeys<Example, 'a'>;
+
+type Test2 = MutableByKeys<Example, 'a' | 'b'>;
+
+type FullyMutable<T> = MutableByKeys<T, keyof T>;
 
 
 
 
 
+// Завдання #7: UpperCaseKeys
+// Створіть тип UpperCaseKeys, який буде переводити всі ключі у верхній регістр.
+
+type UpperCaseKeys<T> = {
+    [K in keyof T as Uppercase<string & K>]: T[K]
+};
+
+
+interface ExampleG {
+    folderName: string;
+    fileName: string;
+    fileSize: number;
+};
+
+type UpperCaseExample = UpperCaseKeys<ExampleG>;
+
+//   interface UpperCaseExampleG {
+//     FOLDERNAM: string;
+//     FILENAME: string;
+//     FILESIZE: number;
+//   }
 
 
 
 
 
+// Завдання #8: ObjectToPropertyDescriptor
+// Створіть тип ObjectToPropertyDescriptor, який перетворює звичайний об'єкт на об'єкт, де кожне value є дескриптором.
+
+type PropertyDescriptorU<T> = {
+    configurable?: boolean;
+    enumerable?: boolean;
+    value?: T;
+    writable?: boolean;
+    get?(): T;
+    set?(v: T): void;
+};
+
+type ObjectToPropertyDescriptorU<T> = {
+    [K in keyof T]: PropertyDescriptorU<T[K]>
+};
 
 
 
+type ExampleU = {
+    name: string;
+    age: number;
+};
 
+type DescriptorExampleU = ObjectToPropertyDescriptorU<ExampleU>;
 
-
-
+// interface DescriptorExampleU {
+//     name: PropertyDescriptorU<string>;
+//     age: PropertyDescriptorU<number>;
+// }
 
 
