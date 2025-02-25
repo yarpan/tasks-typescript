@@ -16,7 +16,7 @@ interface IBankAccount {
   withdraw(amount: number): void;
 }
 
-interface ICommand {
+interface ITransactionCommand {
   execute(): void;
   undo(): void;
 }
@@ -112,8 +112,49 @@ class ClientAccountService {
 
 
 
-class DepositCommand implements ICommand {
-  constructor(private account: IBankAccount, private amount: number) { }
+class Transaction {
+  public readonly amount: number;
+  public readonly date: number;
+  public readonly id: number;
+  public readonly type: TransactionType;
+
+  constructor(type: TransactionType, amount: number, id: number) {
+    this.amount = amount;
+    this.id = id;
+    this.type = type;
+    this.date = Date.now();
+  }
+}
+
+
+
+class TransactionHistory {
+  private readonly _transactions: Transaction[] = [];
+
+  public get transactions(): ReadonlyArray<Transaction> {
+    return this._transactions;
+  }
+
+  public addTransaction(type: TransactionType, amount: number): void {
+    const transactionId = this.generateTransactionId();
+    this._transactions.push(new Transaction(type, amount, transactionId));
+  }
+
+  private generateTransactionId(): number {
+    return Date.now();
+  }
+
+  public printHistory(): void {
+    this.transactions.forEach(tx =>
+      console.log(`[${new Date(tx.date).toISOString()}] ${tx.type.toUpperCase()} ${tx.amount}`)
+    );
+  }
+}
+
+
+
+class DepositCommand implements ITransactionCommand {
+  constructor(private account: IBankAccount, private amount: number) {}
 
   execute(): void {
     this.account.deposit(this.amount);
@@ -126,8 +167,8 @@ class DepositCommand implements ICommand {
 
 
 
-class WithdrawCommand implements ICommand {
-  constructor(private account: IBankAccount, private amount: number) { }
+class WithdrawCommand implements ITransactionCommand {
+  constructor(private account: IBankAccount, private amount: number) {}
 
   execute(): void {
     this.account.withdraw(this.amount);
@@ -141,29 +182,29 @@ class WithdrawCommand implements ICommand {
 
 
 class TransactionQueue {
-  private readonly history: ICommand[] = [];
-  private readonly undone: ICommand[] = [];
+  private queue: ITransactionCommand[] = [];
+  private history: ITransactionCommand[] = [];
 
-  public execute(command: ICommand): void {
-    command.execute();
-    this.history.push(command);
-    this.undone.length = 0;
+  public addToQueue(command: ITransactionCommand): void {
+    this.queue.push(command);
   }
 
-  public undo(): void {
-    const command = this.history.pop();
-    if (command) {
-      command.undo();
-      this.undone.push(command);
+  public processQueue(): void {
+    while (this.queue.length > 0) {
+      const command = this.queue.shift();
+      command?.execute();
+      this.history.push(command!);
     }
   }
 
-  public redo(): void {
-    const command = this.undone.pop();
-    if (command) {
-      command.execute();
-      this.history.push(command);
-    }
+  public undoLastTransaction(): void {
+    const lastCommand = this.history.pop();
+    lastCommand?.undo();
+  }
+
+  public repeatLastTransaction(): void {
+    const lastCommand = this.history[this.history.length - 1];
+    lastCommand?.execute();
   }
 }
 
@@ -195,13 +236,11 @@ class Bank {
   private static instance: Bank;
   private clientService: ClientService;
   private accountService: BankAccountService;
-  private transactionQueue: TransactionQueue;
   private clientAccounts = new Map<string, ClientAccountService>();
 
   private constructor() {
     this.clientService = new ClientService();
     this.accountService = new BankAccountService(BankAccountFactory);
-    this.transactionQueue = new TransactionQueue();
   }
 
   public static getInstance(): Bank {
@@ -230,18 +269,6 @@ class Bank {
   public closeAccount(client: Client, accountNumber: string): void {
     this.clientAccounts.get(client.clientId)?.closeAccount(accountNumber);
   }
-
-  public executeTransaction(command: ICommand): void {
-    this.transactionQueue.execute(command);
-  }
-
-  public undoTransaction(): void {
-    this.transactionQueue.undo();
-  }
-
-  public redoTransaction(): void {
-    this.transactionQueue.redo();
-  }
 }
 
 
@@ -262,26 +289,19 @@ class ClientService {
 
 
 
-// ============== USAGE ===============
+// ============ USAGE ============
+
 const bank = Bank.getInstance();
+const client = bank.registerClient("Vasyl", "Kisyl");
+const account = bank.createAccount(client, 500, Currency.USD);
 
-const client = bank.registerClient("Alice", "Johnson");
+const transactionQueue = new TransactionQueue();
 
-const usdAccount = bank.createAccount(client, 1200, Currency.USD);
-const eurAccount = bank.createAccount(client, 300, Currency.EUR);
+transactionQueue.addToQueue(new DepositCommand(account, 100));
+transactionQueue.addToQueue(new WithdrawCommand(account, 50));
 
-console.log(bank.getClientAccounts(client));
+transactionQueue.processQueue();
 
-const deposit = new DepositCommand(usdAccount, 100);
-const withdraw = new WithdrawCommand(eurAccount, 50);
+transactionQueue.undoLastTransaction();
 
-bank.executeTransaction(deposit);
-bank.executeTransaction(withdraw);
-
-console.log(bank.getClientAccounts(client));
-
-bank.undoTransaction();
-console.log(bank.getClientAccounts(client));
-
-bank.redoTransaction();
-console.log(bank.getClientAccounts(client));
+transactionQueue.repeatLastTransaction();
