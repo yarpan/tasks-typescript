@@ -1,3 +1,20 @@
+/*
+Task: Book Service Interface
+You need to create an interface for a book service. Also, consider the interfaces for describing books and authors.
+Create an interface IBookService that will describe the book service.
+This interface should contain methods for performing the following operations:
+
+getBooks - retrieve all available books
+getBookById - retrieve a book by its identifier
+getAuthors - retrieve all authors
+getAuthorById - retrieve an author by their identifier
+getBooksByAuthor - retrieve books by the author's identifier or by their name
+getAuthorByBookId - retrieve an author by the book's identifier
+search - global search by book title, genre, publication year, or author
+
+Implement the service with examples. Describe your favorite books.
+*/
+
 enum Genre {
   Detective = "Detective",
   Adventure = "Adventure",
