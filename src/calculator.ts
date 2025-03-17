@@ -20,7 +20,7 @@ Implement method overloading if needed
 
 */
 
-enum Operation {
+export enum Operation {
   Add = "add",
   Subtract = "subtract",
   Multiply = "multiply",
@@ -38,7 +38,7 @@ interface ICalculator {
 }
 
 
-class Calculator implements ICalculator {
+export class Calculator implements ICalculator {
   add(x: number, y: number): number {
     return x + y;
   }
